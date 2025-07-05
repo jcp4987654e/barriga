@@ -3,290 +3,432 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ensayo de Dureza Vickers: Guía Interactiva</title>
+    <title>Automatización de Bomba con VFD: Guía Interactiva</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Serene Tech (Background: #FDFDFB, Text: #333333, Primary: #2D5A6C, Accent: #A58D7B) -->
-    <!-- Application Structure Plan: A single-page, multi-section layout designed for guided discovery. It starts with a broad introduction, then drills down into the 'how' (interactive procedure), 'what' (formula calculator), and 'what for' (materials comparison and applications). This task-oriented flow (Understand -> Calculate -> Compare -> Apply) is more intuitive for learning than a linear report structure, encouraging interaction at each stage. Navigation is handled by a sticky header for easy access to all sections. -->
-    <!-- Visualization & Content Choices:
-    - Intro: HTML/CSS diagram to visually hook the user. Goal: Inform/Engage.
-    - Procedure: Interactive HTML tabs. Goal: Organize/Explain. Method: JS toggles content visibility. Justification: Breaks down a complex process into manageable, user-controlled steps.
-    - Formula: Interactive calculator. Goal: Inform/Engage. Method: JS function on input fields. Justification: Makes an abstract formula practical and understandable.
-    - Materials: Interactive Chart.js horizontal bar chart with a logarithmic scale and category filter. Goal: Compare/Explore. Justification: Effectively compares materials with vast differences in hardness values. The filter allows users to focus on specific material groups, enhancing data exploration.
-    - Applications: Interactive HTML tabs. Goal: Organize/Explain. Method: JS toggles content. Justification: Presents distinct use cases cleanly without cluttering the page.
-    - Library/Method: Vanilla JS for all interactions and Chart.js for visualization.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Teko:wght@400;600&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #FDFDFB;
-            color: #333333;
+            font-family: 'Roboto Mono', monospace;
+            background-color: #111827;
+            color: #E5E7EB;
         }
         .nav-link {
             transition: color 0.3s, border-bottom-color 0.3s;
             border-bottom: 2px solid transparent;
         }
         .nav-link:hover, .nav-link.active {
-            color: #2D5A6C;
-            border-bottom-color: #2D5A6C;
-        }
-        .btn-primary {
-            background-color: #2D5A6C;
-            color: white;
-            transition: background-color 0.3s;
-        }
-        .btn-primary:hover {
-            background-color: #244857;
-        }
-        .tab.active {
-            background-color: #2D5A6C;
-            color: white;
-            border-color: #2D5A6C;
-        }
-        .tab {
-            border-color: #A58D7B;
-            color: #A58D7B;
+            color: #38BDF8;
+            border-bottom-color: #38BDF8;
         }
         .card {
-            background-color: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            background-color: #1F2937;
+            border-radius: 0.5rem;
+            border: 1px solid #374151;
             transition: transform 0.3s, box-shadow 0.3s;
         }
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -2px rgb(0 0 0 / 0.1);
-        }
-        .chart-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 400px;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 500px;
-            }
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2), 0 4px 6px -2px rgb(0 0 0 / 0.2);
         }
         .h-line {
-            width: 50px;
-            height: 3px;
-            background-color: #A58D7B;
+            width: 60px;
+            height: 2px;
+            background-color: #38BDF8;
             margin: 0 auto;
+        }
+        #main-header {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .content-container {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .integrante-nombre {
+            transition: color 0.3s;
+        }
+        .integrante-nombre:hover {
+            color: #38BDF8;
+        }
+        .presentation-nav {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .image-modal-backdrop {
+            transition: opacity 0.3s ease-in-out;
+        }
+        .image-modal-content {
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+        .clickable-image {
+            cursor: zoom-in;
+        }
+        .section-title {
+            font-family: 'Teko', sans-serif;
+            font-size: 3.5rem;
+            letter-spacing: 1px;
+            color: #F9FAFB;
+        }
+        .section-subtitle {
+            font-family: 'Inter', sans-serif;
+        }
+        .vfd-block {
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .vfd-block:hover {
+            background-color: #38bdf820;
+            border-color: #38BDF8;
+        }
+        #motor-shaft {
+            transition: transform 0.1s linear;
+            transform-origin: center;
+        }
+        main > section.presentation-slide {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+        main > section.active-slide {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+            position: relative;
         }
     </style>
 </head>
 <body class="overflow-x-hidden">
+    
+    <div class="fixed top-4 right-4 z-[60] flex space-x-2">
+        <button id="play-presentation-btn" class="p-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition">
+            <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+            <svg id="stop-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden text-white"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>
+        </button>
+        <button id="fullscreen-btn" class="p-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+    </div>
 
-    <header id="header" class="bg-white/80 backdrop-blur-md sticky top-0 z-50 shadow-sm">
-        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
-            <h1 class="text-xl md:text-2xl font-bold text-[#2D5A6C]">Ensayo Vickers</h1>
-            <div class="hidden md:flex space-x-8">
-                <a href="#intro" class="nav-link font-semibold pb-1">Introducción</a>
-                <a href="#proceso" class="nav-link font-semibold pb-1">Proceso</a>
-                <a href="#calculadora" class="nav-link font-semibold pb-1">Cálculo</a>
-                <a href="#comparativa" class="nav-link font-semibold pb-1">Comparativa</a>
-                <a href="#aplicaciones" class="nav-link font-semibold pb-1">Aplicaciones</a>
+    <div id="presentation-nav-prev" class="presentation-nav fixed left-4 top-1/2 -translate-y-1/2 z-[60] opacity-0 pointer-events-none">
+        <button class="p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
+             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+    </div>
+     <div id="presentation-nav-next" class="presentation-nav fixed right-4 top-1/2 -translate-y-1/2 z-[60] opacity-0 pointer-events-none">
+        <button class="p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition">
+             <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+    </div>
+
+
+    <section id="caratula" class="relative text-white" style="min-height: 100vh; overflow: hidden;">
+        <div class="absolute inset-0 bg-gray-900">
+            <img src="https://images.unsplash.com/photo-1617994422012-ba24c3a4df76?q=80&w=2070&auto=format&fit=crop" alt="Fondo de sistema de bombeo moderno" class="w-full h-full object-cover opacity-20">
+        </div>
+        <div class="relative z-10 flex flex-col items-center justify-center min-h-screen text-center p-8">
+            
+            <div id="initial-content-wrapper" class="content-container w-full flex flex-col items-center justify-center">
+                <h1 class="text-5xl md:text-7xl font-black tracking-tight text-white my-4" style="font-family: 'Teko', sans-serif; text-shadow: 2px 2px 8px rgba(0,0,0,0.7);">Automatización y Control Avanzado de Bomba de Riego con Motor Monofásico y VFD</h1>
+                <button id="start-presentation-btn" class="mt-8 inline-block bg-sky-400 text-gray-900 font-bold py-4 px-10 rounded-lg text-xl hover:bg-sky-300 transition-colors duration-300 shadow-lg">
+                    Comenzar Exposición
+                </button>
             </div>
-            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-[#2D5A6C]">
-                <div class="w-6 h-0.5 bg-[#333333] mb-1.5"></div>
-                <div class="w-6 h-0.5 bg-[#333333]"></div>
+            
+            <div id="integrantes-content-wrapper" class="content-container absolute inset-0 w-full flex-col items-center justify-center opacity-0 pointer-events-none flex">
+                 <p class="text-4xl font-bold mb-8">Integrantes</p>
+                 <div class="text-5xl md:text-7xl font-semibold space-y-4">
+                    <p class="integrante-nombre">Jesus Castellanos</p>
+                    <p class="integrante-nombre">Lucas Espinola</p>
+                    <p class="integrante-nombre">Tobias Copa</p>
+                    <p class="integrante-nombre">Joaquin Huaman</p>
+                    <p class="integrante-nombre">Brian Alcon</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <header id="main-header" class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-50 opacity-0">
+        <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-sky-400" style="font-family: 'Teko', sans-serif;">Automatización de Bomba</h1>
+            <div class="hidden md:flex flex-wrap items-center justify-center space-x-4 lg:space-x-6">
+                <a href="#intro" class="nav-link font-semibold pb-1">Introducción</a>
+                <a href="#motor" class="nav-link font-semibold pb-1">El Motor</a>
+                <a href="#vfd" class="nav-link font-semibold pb-1">El VFD</a>
+                <a href="#beneficios" class="nav-link font-semibold pb-1">Beneficios</a>
+                <a href="#diseno" class="nav-link font-semibold pb-1">Diseño y Seguridad</a>
+                <a href="#conclusion" class="nav-link font-semibold pb-1">Conclusión</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-400">
+                <div class="w-6 h-0.5 bg-white mb-1.5"></div>
+                <div class="w-6 h-0.5 bg-white"></div>
             </button>
         </nav>
         <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
-            <a href="#intro" class="block py-2 text-center nav-link">Introducción</a>
-            <a href="#proceso" class="block py-2 text-center nav-link">Proceso</a>
-            <a href="#calculadora" class="block py-2 text-center nav-link">Cálculo</a>
-            <a href="#comparativa" class="block py-2 text-center nav-link">Comparativa</a>
-            <a href="#aplicaciones" class="block py-2 text-center nav-link">Aplicaciones</a>
+             <a href="#intro" class="block py-2 text-center nav-link">Introducción</a>
+            <a href="#motor" class="block py-2 text-center nav-link">El Motor Monofásico</a>
+            <a href="#vfd" class="block py-2 text-center nav-link">El Variador de Frecuencia</a>
+            <a href="#beneficios" class="block py-2 text-center nav-link">Beneficios</a>
+            <a href="#diseno" class="block py-2 text-center nav-link">Diseño y Seguridad</a>
+            <a href="#conclusion" class="block py-2 text-center nav-link">Conclusión</a>
         </div>
     </header>
 
     <main>
-        <section id="intro" class="py-16 md:py-24">
-            <div class="container mx-auto px-6 text-center">
-                <h2 class="text-3xl md:text-5xl font-bold text-[#2D5A6C] mb-4">El Ensayo de Dureza Universal</h2>
-                <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-600 mb-12">
-                    El ensayo Vickers es un método de alta precisión que mide la resistencia de un material a ser deformado. Su versatilidad para analizar desde metales blandos hasta cerámicas duras lo convierte en una herramienta fundamental en la ciencia de materiales y el control de calidad industrial.
-                </p>
-                <div class="h-line mb-12"></div>
-                <div class="max-w-2xl mx-auto card p-8">
-                     <p class="text-xl font-semibold mb-4 text-[#2D5A6C]">El Principio: Una Huella de Precisión</p>
-                    <div class="flex flex-col md:flex-row items-center justify-center gap-8">
-                        <div class="text-center">
-                             <div class="text-6xl mb-2">💎</div>
-                             <p class="font-bold">Penetrador de Diamante</p>
-                             <p class="text-sm text-gray-500">Forma piramidal indeformable</p>
+        <section id="intro" class="py-16 md:py-24 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center">
+                    <h2 class="section-title">Contexto y Objetivos del Proyecto</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 mb-12 section-subtitle">
+                        Partimos de una instalación de riego típica: una bomba en un pozo de 20m, accionada por un motor monofásico de 1,5 HP. El control original, un simple interruptor, genera problemas mecánicos e hidráulicos. Nuestro objetivo es transformar este sistema en uno automatizado, inteligente y seguro.
+                    </p>
+                </div>
+                <div class="max-w-5xl mx-auto card p-8">
+                     <p class="text-center text-2xl font-bold mb-6 text-sky-400">Objetivos de Ingeniería</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                        <div>
+                            <div class="text-5xl mb-4">💨</div>
+                            <h3 class="font-bold text-xl">Arranque y Parada Suaves</h3>
+                            <p class="text-gray-400">Eliminar el estrés mecánico y el destructivo golpe de ariete.</p>
                         </div>
-                        <div class="text-5xl font-thin text-[#A58D7B]">→</div>
-                         <div class="text-center">
-                             <div class="text-6xl mb-2">⚙️</div>
-                             <p class="font-bold">Muestra del Material</p>
-                              <p class="text-sm text-gray-500">Superficie plana y pulida</p>
+                        <div>
+                            <div class="text-5xl mb-4">🔄</div>
+                            <h3 class="font-bold text-xl">Inversión de Giro</h3>
+                            <p class="text-gray-400">Habilitar una función esencial para el mantenimiento y desatasco de la bomba.</p>
                         </div>
-                         <div class="text-5xl font-thin text-[#A58D7B]">→</div>
-                        <div class="text-center">
-                             <div class="text-6xl mb-2">📐</div>
-                             <p class="font-bold">Huella Medible</p>
-                              <p class="text-sm text-gray-500">Un material más duro deja una huella más pequeña</p>
+                        <div>
+                            <div class="text-5xl mb-4">🎛️</div>
+                            <h3 class="font-bold text-xl">Control de Velocidad Preciso</h3>
+                            <p class="text-gray-400">Regular el caudal para optimizar el uso de agua y energía.</p>
                         </div>
                     </div>
-                     <p class="mt-6 text-gray-600">
-                        La esencia del ensayo es simple: se aplica una fuerza controlada (`F`) con el penetrador de diamante sobre la muestra. Luego, se mide el tamaño de la huella resultante. Esta relación entre fuerza y área de la huella define la dureza del material.
-                    </p>
                 </div>
             </div>
         </section>
 
-        <section id="proceso" class="py-16 md:py-24 bg-white">
+        <section id="motor" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[#2D5A6C] mb-4">El Proceso, Paso a Paso</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600">
-                        Para garantizar resultados fiables y comparables, el ensayo Vickers sigue un procedimiento estandarizado. Cada paso es crucial para la precisión del resultado final. Haz clic en cada paso para ver los detalles.
+                    <h2 class="section-title">El Dilema del Motor Monofásico</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">
+                        Para apreciar la solución, debemos entender el problema: un motor monofásico, por sí solo, no puede arrancar. Necesita un "truco" de ingeniería para crear el campo magnético giratorio que un motor trifásico genera de forma natural.
                     </p>
                      <div class="h-line mt-6"></div>
                 </div>
-                <div class="flex flex-col md:flex-row gap-8">
-                    <div class="md:w-1/3">
-                        <div id="proceso-tabs" class="flex md:flex-col justify-center gap-4">
-                            <button data-target="paso1" class="proceso-tab tab text-lg font-semibold border-2 rounded-lg px-6 py-3 w-full text-left transition duration-300 active">1. Preparación</button>
-                            <button data-target="paso2" class="proceso-tab tab text-lg font-semibold border-2 rounded-lg px-6 py-3 w-full text-left transition duration-300">2. Indentación</button>
-                            <button data-target="paso3" class="proceso-tab tab text-lg font-semibold border-2 rounded-lg px-6 py-3 w-full text-left transition duration-300">3. Medición</button>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">El Campo Pulsante</h3>
+                        <p class="text-gray-300 mb-4">La red monofásica solo puede producir un campo magnético que pulsa en un eje, incapaz de generar un par de arranque. La solución es crear artificialmente un segundo campo desfasado.</p>
+                        <img src="https://www.researchgate.net/publication/332204858/figure/fig1/AS:744211105906688@1554444856982/Pulsating-magnetic-field-produced-by-a-single-phase-winding.jpg" alt="Campo magnético pulsante" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Campo Magnético Pulsante" data-description="Un campo magnético que solo alterna su polaridad en un único eje. No rota, simplemente pulsa, y es incapaz de generar un par de arranque.">
                     </div>
-                    <div class="md:w-2/3">
-                        <div id="paso1" class="proceso-content card p-8">
-                             <h3 class="text-2xl font-bold text-[#2D5A6C] mb-4">Paso 1: Preparación de la Muestra</h3>
-                            <img src="https://www.metallographic.com/images/Grinding-Polishing-2.jpg" alt="Pulido metalográfico" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x300/e2e8f0/94a3b8?text=Pulido+a+Espejo';">
-                            <p class="text-gray-700">La fiabilidad del ensayo depende críticamente de la calidad de la superficie. Esta debe ser plana, lisa y libre de contaminantes. Para ensayos de microdureza, que usan cargas muy bajas, se requiere un **pulido metalográfico a espejo**. Una superficie imperfecta distorsionaría la forma de la huella y conduciría a mediciones erróneas.</p>
-                        </div>
-                        <div id="paso2" class="proceso-content hidden card p-8">
-                             <h3 class="text-2xl font-bold text-[#2D5A6C] mb-4">Paso 2: Aplicación de la Carga (Indentación)</h3>
-                            <img src="https://www.tec-science.com/wp-content/uploads/2021/03/en-hardness-test-vickers-process.jpg" alt="Proceso de indentación Vickers" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x300/e2e8f0/94a3b8?text=Indentación';">
-                            <p class="text-gray-700">Se presiona el penetrador de diamante, con su ángulo característico de 136° entre caras opuestas, sobre la superficie. La fuerza de ensayo (`F`) se aplica de forma suave y controlada, manteniéndose constante durante un tiempo estándar de **10 a 15 segundos**. Este ciclo asegura que el material se deforme plásticamente de manera estable.</p>
-                        </div>
-                        <div id="paso3" class="proceso-content hidden card p-8">
-                             <h3 class="text-2xl font-bold text-[#2D5A6C] mb-4">Paso 3: Medición Óptica de la Huella</h3>
-                            <img src="https://www.researchgate.net/profile/Enrique-Rocha-Rangel/publication/28211170/figure/fig4/AS:667825068699651@1536233310069/Micrografia-tipica-de-las-indentaciones-Vickers-50-MPa.png" alt="Huella de dureza Vickers" class="w-full h-48 object-cover rounded-lg mb-4" onerror="this.onerror=null;this.src='https://placehold.co/600x300/e2e8f0/94a3b8?text=Huella+Vickers';">
-                            <p class="text-gray-700">Tras retirar la carga, se utiliza un microscopio integrado en el durómetro para medir con precisión las longitudes de las dos diagonales (`d₁` y `d₂`) de la huella cuadrada. Se calcula la **media aritmética de ambas diagonales** (`d`) para compensar posibles distorsiones y obtener una base de cálculo más exacta.</p>
-                        </div>
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">La Solución Interna: Devanados y Capacitor</h3>
+                        <p class="text-gray-300 mb-4">El motor monofásico utiliza dos bobinados (principal y auxiliar) y un capacitor para desfasar la corriente en el bobinado auxiliar. Esto simula el campo giratorio necesario para arrancar.</p>
+                        <img src="https://www.construmatica.com/construpedia/images/thumb/4/4c/Motor_monofasico.png/400px-Motor_monofasico.png" alt="Diagrama de motor monofásico con capacitor" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Anatomía del Motor Monofásico" data-description="Diagrama del estator mostrando los dos devanados (principal y auxiliar) desplazados físicamente y el capacitor en serie con el auxiliar.">
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <section id="calculadora" class="py-16 md:py-24">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[#2D5A6C] mb-4">La Fórmula en Acción</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600">El valor de dureza Vickers (HV) no se mide directamente, sino que se calcula. Utiliza esta calculadora interactiva para entender cómo la fuerza aplicada y el tamaño de la huella determinan la dureza.</p>
-                     <div class="h-line mt-6"></div>
-                </div>
-
-                <div class="max-w-4xl mx-auto card p-8">
-                    <div class="text-center mb-6">
-                        <p class="text-2xl font-mono bg-gray-100 p-4 rounded-lg inline-block">HV ≈ 1.854 × ( F / d² )</p>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
-                        <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-6">
-                            <div>
-                                <label for="fuerza" class="block font-semibold mb-2">Fuerza Aplicada (F) <span class="text-sm text-gray-500">(kgf)</span></label>
-                                <input type="number" id="fuerza" value="30" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A58D7B] focus:border-[#A58D7B]">
-                            </div>
-                            <div>
-                                <label for="diagonal" class="block font-semibold mb-2">Diagonal Media (d) <span class="text-sm text-gray-500">(mm)</span></label>
-                                <input type="number" id="diagonal" value="0.35" step="0.01" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#A58D7B] focus:border-[#A58D7B]">
-                            </div>
-                             <div class="sm:col-span-2">
-                                <button id="calculateBtn" class="btn-primary w-full font-bold py-3 px-6 rounded-lg">Calcular Dureza</button>
-                            </div>
-                        </div>
-                        <div class="text-center bg-blue-50 p-6 rounded-lg border-2 border-dashed border-[#2D5A6C]">
-                            <p class="text-lg font-semibold text-[#2D5A6C]">Dureza Vickers</p>
-                            <p id="resultadoHV" class="text-4xl md:text-5xl font-bold text-[#2D5A6C] my-2">--</p>
-                            <p id="resultadoLabel" class="text-gray-600 font-semibold">HV</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="comparativa" class="py-16 md:py-24 bg-white">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[#2D5A6C] mb-4">Comparando Materiales</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600">La dureza varía enormemente entre distintos materiales. Explora este gráfico interactivo para comparar valores típicos de dureza Vickers. Usa el filtro para centrarte en categorías específicas.</p>
-                     <div class="h-line mt-6"></div>
-                </div>
-
-                <div class="max-w-4xl mx-auto card p-6 md:p-8">
-                    <div class="flex justify-end mb-4">
-                         <select id="materialFilter" class="p-2 border border-gray-300 rounded-lg font-semibold focus:ring-2 focus:ring-[#A58D7B] focus:border-[#A58D7B]">
-                            <option value="Todos">Todos los Materiales</option>
-                            <option value="Aceros y Aleaciones">Aceros y Aleaciones</option>
-                            <option value="Metales no Ferrosos">Metales no Ferrosos</option>
-                            <option value="Cerámicas">Cerámicas</option>
-                        </select>
-                    </div>
-                    <div class="chart-container">
-                        <canvas id="hardnessChart"></canvas>
-                    </div>
-                     <p class="text-center text-sm text-gray-500 mt-4">Nota: El eje X (Dureza HV) utiliza una escala logarítmica para visualizar mejor el amplio rango de valores.</p>
+                 <div class="mt-12 text-center card p-8 max-w-4xl mx-auto bg-red-900/50 border-t-4 border-red-500">
+                    <h3 class="text-2xl font-bold text-red-400 mb-4">Criterio Crítico: Incompatibilidad por Diseño</h3>
+                    <p class="text-gray-300 mb-4">No todos los motores monofásicos son compatibles con un VFD. La mayoría utiliza un **interruptor centrífugo** para desconectar el bobinado de arranque. Si se reduce la velocidad con un VFD, este interruptor se reconecta, lo que puede destruir tanto el capacitor como el VFD.</p>
+                    <p class="font-bold text-red-400">La única topología compatible es el motor PSC (Capacitor Permanente), que no tiene interruptor centrífugo.</p>
                 </div>
             </div>
         </section>
         
-        <section id="aplicaciones" class="py-16 md:py-24">
+        <section id="vfd" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl md:text-4xl font-bold text-[#2D5A6C] mb-4">Aplicaciones Industriales Clave</h2>
-                    <p class="max-w-3xl mx-auto text-lg text-gray-600">La precisión del ensayo Vickers lo hace indispensable en múltiples campos donde las propiedades mecánicas son críticas para la seguridad y el rendimiento.</p>
+                    <h2 class="section-title">El Cerebro del Sistema: El Variador de Frecuencia (VFD)</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">
+                        El VFD toma la energía de la red y la moldea para entregar al motor exactamente lo que necesita en cada momento, mediante tres etapas de conversión de potencia.
+                    </p>
+                    <div class="h-line mt-6"></div>
+                </div>
+                <div class="max-w-4xl mx-auto card p-8">
+                    <img src="https://instrumentacionycontrol.net/wp-content/uploads/2018/06/partes-de-un-variador-de-frecuencia.png" alt="Arquitectura de un VFD" class="w-full h-auto object-contain rounded-lg mb-6 clickable-image" data-title="Arquitectura del VFD" data-description="Diagrama de bloques de un Variador de Frecuencia: Red AC -> Puente Rectificador -> Bus de DC (con capacitores) -> Inversor (con IGBTs) -> Salida AC al Motor.">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div>
+                            <h4 class="text-xl font-bold text-sky-400 mb-2">Modulación por Ancho de Pulso (PWM)</h4>
+                            <p class="text-gray-300">El VFD "trocea" la tensión de DC miles de veces por segundo para reconstruir una nueva onda de AC. Variando el ancho de los pulsos controla la tensión (par), y variando la periodicidad controla la frecuencia (velocidad).</p>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-sky-400 mb-2">Control Escalar V/Hz</h4>
+                            <p class="text-gray-300">Para mantener la fuerza del motor a bajas velocidades, el VFD mantiene constante la relación Voltaje/Frecuencia. Si reduce la frecuencia a la mitad, también reduce la tensión a la mitad, garantizando un par adecuado.</p>
+                        </div>
+                    </div>
+                </div>
+                 <div class="max-w-4xl mx-auto card p-8 mt-8">
+                    <h3 class="text-2xl font-bold text-center text-sky-400 mb-6">Simulador Interactivo de VFD</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+                        <div class="md:col-span-2">
+                             <label for="frequency-slider" class="block font-semibold mb-2">Frecuencia (Hz)</label>
+                             <input type="range" id="frequency-slider" min="0" max="50" value="50" step="1" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                             <div class="flex justify-between text-xs px-1">
+                                 <span>0 Hz</span>
+                                 <span>25 Hz</span>
+                                 <span>50 Hz</span>
+                             </div>
+                        </div>
+                        <div id="motor-animation" class="flex justify-center items-center h-32">
+                           <svg id="motor-svg" class="w-32 h-32" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="45" fill="#374151" stroke="#4B5563" stroke-width="2"/>
+                                <circle cx="50" cy="50" r="38" fill="#1F2937" stroke="#4B5563" stroke-width="1"/>
+                                <g id="motor-shaft">
+                                    <circle cx="50" cy="50" r="10" fill="#9CA3AF"/>
+                                    <rect x="48" y="15" width="4" height="35" fill="#9CA3AF"/>
+                                    <circle cx="50" cy="15" r="3" fill="#6B7280"/>
+                                </g>
+                           </svg>
+                        </div>
+                    </div>
+                     <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                         <div class="bg-gray-700 p-4 rounded-lg">
+                             <p class="text-sm font-bold text-sky-400">Velocidad</p>
+                             <p id="speed-output" class="text-2xl font-bold">100%</p>
+                         </div>
+                         <div class="bg-gray-700 p-4 rounded-lg">
+                             <p class="text-sm font-bold text-sky-400">Tensión</p>
+                             <p id="voltage-output" class="text-2xl font-bold">220 V</p>
+                         </div>
+                         <div class="bg-gray-700 p-4 rounded-lg">
+                             <p class="text-sm font-bold text-sky-400">Torque</p>
+                             <p id="torque-output" class="text-2xl font-bold">7.50 Nm</p>
+                         </div>
+                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="beneficios" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title">Beneficios Prácticos de la Automatización</h2>
                      <div class="h-line mt-6"></div>
                 </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="card p-8 flex flex-col">
-                        <div class="text-3xl mb-4">🌡️</div>
-                        <h3 class="text-xl font-bold text-[#2D5A6C] mb-3">Tratamientos Térmicos</h3>
-                        <p class="text-gray-600 flex-grow">Es el método estándar para verificar la eficacia de tratamientos como la cementación o el temple. Se crean "perfiles de dureza" midiendo desde la superficie hacia el núcleo para determinar con exactitud la profundidad de la capa endurecida, un parámetro vital para engranajes y ejes.</p>
-                        <img src="https://www.zwickroell.com/wp-content/uploads/2021/05/Verlauf-der-Haerte-in-Abhaengigkeit-vom-Abstand-von-der-Oberflaeche-bei-der-Einsatzhaertetiefe-CHD-650x400.png" alt="Perfil de dureza" class="w-full h-40 object-cover rounded-lg mt-4" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=Perfil+de+Dureza';">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Arranque y Parada Suaves</h3>
+                        <p class="text-gray-300 mb-4">El VFD programa rampas de aceleración y desaceleración, eliminando el golpe brusco de un arranque directo. Esto prolonga la vida útil de acoplamientos, ejes, rodamientos y la bomba.</p>
+                        <img src="https://www.researchgate.net/publication/326161405/figure/fig1/AS:644383416455168@1530646194432/Figura-1-Arranque-directo-de-un-motor-de-induccion-a-b-c-Corrientes-de-fase-d.png" alt="Corrientes de arranque directo" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Estrés en Arranque Directo" data-description="Gráfico de corriente de un arranque directo, mostrando el pico de corriente que causa estrés mecánico.">
                     </div>
-
-                    <div class="card p-8 flex flex-col">
-                        <div class="text-3xl mb-4">🔗</div>
-                        <h3 class="text-xl font-bold text-[#2D5A6C] mb-3">Análisis de Soldaduras</h3>
-                        <p class="text-gray-600 flex-grow">El calor de la soldadura altera las propiedades del metal. Con Vickers, se crean "mapas de dureza" sobre la unión para visualizar la distribución de propiedades y detectar zonas frágiles o reblandecidas que podrían causar fallos. Es un requisito en la calificación de soldadores y procedimientos.</p>
-                        <img src="https://www.researchgate.net/profile/Nicollas-Arruda/publication/335104976/figure/fig7/AS:790104193568771@1565388175512/Mapas-de-microdureza-em-escala-Vickers-Hardness-Vickers-HV-no-aco-SAE-1045-com.png" alt="Mapa de dureza en soldadura" class="w-full h-40 object-cover rounded-lg mt-4" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=Mapa+de+Dureza';">
-                    </div>
-
-                    <div class="card p-8 flex flex-col">
-                        <div class="text-3xl mb-4">🔬</div>
-                        <h3 class="text-xl font-bold text-[#2D5A6C] mb-3">Microdureza y Capas Finas</h3>
-                        <p class="text-gray-600 flex-grow">La capacidad de usar cargas muy ligeras (microdureza) permite medir con precisión recubrimientos delgados (PVD, galvanizados), componentes electrónicos, piezas de relojería, o incluso fases individuales dentro de la microestructura de un material, siendo clave para la investigación y el desarrollo.</p>
-                        <img src="https://www.innovatest-europe.com/wp-content/uploads/2019/08/weld-inspection-hardness-testing-1024x768.jpg" alt="Microdureza" class="w-full h-40 object-cover rounded-lg mt-4" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/94a3b8?text=Microdureza';">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Eliminación del Golpe de Ariete</h3>
+                        <p class="text-gray-300 mb-4">Este violento fenómeno hidráulico ocurre cuando una columna de agua se detiene abruptamente, pudiendo destruir tuberías y válvulas. Las rampas del VFD son la solución más efectiva al evitar cambios bruscos de velocidad.</p>
+                        <img src="https://www.comeval.es/wp-content/uploads/2020/07/golpe-de-ariete-en-valvulas-y-tuberias.jpg" alt="Animación de golpe de ariete" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Fenómeno del Golpe de Ariete" data-description="Ilustración del fenómeno de golpe de ariete, donde la detención brusca del fluido genera una onda de sobrepresión destructiva.">
                     </div>
                 </div>
             </div>
         </section>
+
+        <section id="diseno" class="py-16 md:py-24 presentation-slide">
+            <div class="container mx-auto px-6">
+                 <div class="text-center mb-12">
+                    <h2 class="section-title">Diseño y Seguridad del Sistema</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">La implementación práctica se basa en un conexionado correcto y en múltiples barreras de protección para una operación segura y fiable.</p>
+                     <div class="h-line mt-6"></div>
+                </div>
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="card p-8">
+                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Inversión de Giro Segura</h3>
+                         <p class="text-gray-300 mb-4">La inversión de giro en un motor monofásico requiere un cambio físico en el cableado externo, gestionado de forma segura con contactores. Es un error crítico intentar hacerlo solo por programación.</p>
+                         <img src="https://i.ytimg.com/vi/e-J4eD_0gX8/maxresdefault.jpg" alt="Circuito de inversión de giro con contactores" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Circuito de Fuerza para Inversión de Giro" data-description="Diagrama de potencia con dos contactores (K1 y K2) para invertir de forma segura las conexiones del bobinado auxiliar del motor.">
+                    </div>
+                     <div class="card p-8">
+                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Protecciones Críticas</h3>
+                         <p class="text-gray-300 mb-4">La seguridad se garantiza con un enclavamiento mecánico entre contactores, un enclavamiento eléctrico (contactos auxiliares NC) y un relé temporizador que impide la inversión hasta que el motor esté completamente detenido.</p>
+                         <img src="https://instrumentacionycontrol.net/wp-content/uploads/2017/10/enclavamiento-electrico-contactores.png" alt="Diagrama de enclavamiento eléctrico" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Lógica de Mando y Enclavamiento" data-description="Diagrama de control que muestra el enclavamiento eléctrico, donde el contacto NC de un contactor impide la activación del otro, previniendo cortocircuitos.">
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="conclusion" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="section-title">Conclusión Final y Resumen Técnico</h2>
+                     <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">En resumen, hemos demostrado que el proyecto de automatizar una bomba de riego con un motor monofásico y un VFD no solo es técnicamente viable, sino que ofrece beneficios operativos transformadores. El éxito de la implementación depende del cumplimiento de condiciones de diseño estrictas.</p>
+                     <div class="h-line mt-6"></div>
+                </div>
+                 <div class="max-w-4xl mx-auto card p-8">
+                     <h3 class="text-2xl font-bold text-center text-sky-400 mb-6">Puntos Clave a Recordar</h3>
+                     <ul class="space-y-4 text-left text-lg">
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-3 mt-1">✔</span>
+                             <div><strong>Selección del Motor:</strong> Debe ser de tipo PSC (Capacitor Permanente), sin interruptor centrífugo.</div>
+                         </li>
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-3 mt-1">✔</span>
+                             <div><strong>Modificación del Motor:</strong> El capacitor de marcha original debe ser retirado físicamente.</div>
+                         </li>
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-3 mt-1">✔</span>
+                             <div><strong>Beneficios Clave:</strong> Se logra un arranque suave que protege la mecánica, se elimina el golpe de ariete y se obtiene un control de velocidad para un uso eficiente del agua.</div>
+                         </li>
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-3 mt-1">✔</span>
+                             <div><strong>Inversión de Giro Segura:</strong> La única forma segura es con un circuito externo de contactores, protegido por enclavamientos dobles (mecánico y eléctrico) y un temporizador de retardo.</div>
+                         </li>
+                     </ul>
+                 </div>
+            </div>
+        </section>
+
     </main>
 
-    <footer class="bg-gray-800 text-white mt-16">
+    <footer class="bg-gray-900 text-white mt-16 border-t border-gray-700">
         <div class="container mx-auto px-6 py-8 text-center">
-            <p class="font-semibold text-lg">Guía Interactiva del Ensayo de Dureza Vickers</p>
-            <p class="text-gray-400 mt-2">Aplicación desarrollada para facilitar la comprensión de uno de los métodos más importantes en la ciencia de materiales.</p>
+            <p class="font-semibold text-lg text-sky-400">Guía Interactiva de Automatización de Bomba</p>
+            <p class="text-gray-400 mt-2">Aplicación desarrollada para la exposición sobre control avanzado de motores monofásicos.</p>
         </div>
     </footer>
+
+    <!-- Image Modal -->
+    <div id="image-modal" class="image-modal-backdrop fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-[70] hidden opacity-0">
+        <div class="image-modal-content bg-gray-800 border border-gray-700 text-white p-4 rounded-lg shadow-xl w-11/12 max-w-4xl max-h-[90vh] flex flex-col scale-95 opacity-0 relative">
+            <button id="modal-close-btn" class="absolute -top-4 -right-4 bg-white text-black rounded-full h-10 w-10 flex items-center justify-center text-2xl font-bold shadow-lg">&times;</button>
+            <div id="modal-title-container" class="flex-shrink-0 mb-4">
+                <h3 id="modal-title" class="text-2xl font-bold text-sky-400"></h3>
+            </div>
+            <div class="flex-grow overflow-hidden flex items-center justify-center">
+                <img id="modal-image" src="" alt="" class="max-w-full max-h-full object-contain">
+            </div>
+            <div id="modal-description-container" class="flex-shrink-0 mt-4">
+                <p id="modal-description" class="text-gray-300"></p>
+            </div>
+        </div>
+    </div>
 
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+            fullscreenBtn.addEventListener('click', () => {
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen();
+                } else {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen();
+                    }
+                }
+            });
+
+            const mainHeader = document.getElementById('main-header');
+            const coverSection = document.getElementById('caratula');
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (!entry.isIntersecting) {
+                        mainHeader.style.opacity = '1';
+                    } else {
+                        mainHeader.style.opacity = '0';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            observer.observe(coverSection);
 
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -300,11 +442,14 @@
                 });
             });
 
-            const sections = document.querySelectorAll('main section');
+            const sections = Array.from(document.querySelectorAll('main section'));
+            const allSlides = [document.getElementById('caratula'), ...sections];
             const navLinks = document.querySelectorAll('.nav-link');
+            
             window.onscroll = () => {
+                if(presentationModeActive) return;
                 let current = '';
-                sections.forEach(section => {
+                allSlides.forEach(section => {
                     const sectionTop = section.offsetTop;
                     if (pageYOffset >= sectionTop - 100) {
                         current = section.getAttribute('id');
@@ -319,148 +464,224 @@
                 });
             };
 
-            const procesoTabs = document.querySelectorAll('.proceso-tab');
-            const procesoContents = document.querySelectorAll('.proceso-content');
-            procesoTabs.forEach(tab => {
-                tab.addEventListener('click', () => {
-                    procesoTabs.forEach(t => t.classList.remove('active'));
-                    tab.classList.add('active');
-                    const target = tab.getAttribute('data-target');
-                    procesoContents.forEach(content => {
-                        content.classList.add('hidden');
-                        if (content.id === target) {
-                            content.classList.remove('hidden');
-                        }
+            const setupTabs = (tabSelector, contentSelector, activeClass) => {
+                const tabs = document.querySelectorAll(tabSelector);
+                const contents = document.querySelectorAll(contentSelector);
+                tabs.forEach(tab => {
+                    tab.addEventListener('click', () => {
+                        tabs.forEach(t => t.classList.remove(activeClass));
+                        tab.classList.add(activeClass);
+                        const target = tab.getAttribute('data-target');
+                        contents.forEach(content => {
+                            content.classList.add('hidden');
+                            if (content.id === target) {
+                                content.classList.remove('hidden');
+                            }
+                        });
                     });
+                });
+            };
+
+            setupTabs('.procedimiento-tab', '.procedimiento-content', 'active');
+            setupTabs('.app-tab', '.app-content', 'active');
+
+            // Caratula Interaction
+            const startBtn = document.getElementById('start-presentation-btn');
+            const initialContent = document.getElementById('initial-content-wrapper');
+            const integrantesContent = document.getElementById('integrantes-content-wrapper');
+            const firstSection = document.getElementById('intro');
+
+            startBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                initialContent.style.opacity = '0';
+                initialContent.style.pointerEvents = 'none';
+                
+                integrantesContent.style.opacity = '1';
+                integrantesContent.style.pointerEvents = 'auto';
+
+                setTimeout(() => {
+                    firstSection.scrollIntoView({ behavior: 'smooth' });
+                }, 2500); 
+            });
+
+
+            // Presentation Mode
+            const playBtn = document.getElementById('play-presentation-btn');
+            const playIcon = document.getElementById('play-icon');
+            const stopIcon = document.getElementById('stop-icon');
+            const prevNav = document.getElementById('presentation-nav-prev');
+            const nextNav = document.getElementById('presentation-nav-next');
+            const prevBtn = prevNav.querySelector('button');
+            const nextBtn = nextNav.querySelector('button');
+            
+            let presentationModeActive = false;
+            let currentSlide = 0;
+
+            function updateNavButtons() {
+                prevBtn.disabled = currentSlide === 0;
+                nextBtn.disabled = currentSlide === allSlides.length - 1;
+            }
+
+            function showSlide(index) {
+                 allSlides.forEach((slide, i) => {
+                    if (i === index) {
+                        slide.classList.add('active-slide');
+                        slide.style.display = 'block';
+                    } else {
+                        slide.classList.remove('active-slide');
+                        slide.style.display = 'none';
+                    }
+                });
+                allSlides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+                updateNavButtons();
+            }
+
+            playBtn.addEventListener('click', () => {
+                presentationModeActive = !presentationModeActive;
+                if (presentationModeActive) {
+                    playIcon.classList.add('hidden');
+                    stopIcon.classList.remove('hidden');
+                    prevNav.style.opacity = '1';
+                    nextNav.style.opacity = '1';
+                    prevNav.style.pointerEvents = 'auto';
+                    nextNav.style.pointerEvents = 'auto';
+                    document.body.style.overflow = 'hidden';
+                    showSlide(currentSlide);
+                } else {
+                    playIcon.classList.remove('hidden');
+                    stopIcon.classList.add('hidden');
+                    prevNav.style.opacity = '0';
+                    nextNav.style.opacity = '0';
+                    prevNav.style.pointerEvents = 'none';
+                    nextNav.style.pointerEvents = 'none';
+                    allSlides.forEach(slide => {
+                        slide.classList.remove('active-slide');
+                        slide.style.display = 'block';
+                    });
+                     document.body.style.overflow = 'auto';
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide < allSlides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            });
+
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            });
+
+             const slideObserver = new IntersectionObserver((entries) => {
+                if(!presentationModeActive) return;
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                       const intersectingSlideIndex = allSlides.findIndex(slide => slide.id === entry.target.id);
+                       if (intersectingSlideIndex !== -1) {
+                           currentSlide = intersectingSlideIndex;
+                           updateNavButtons();
+                       }
+                    }
+                });
+            }, { threshold: 0.6 });
+
+            allSlides.forEach(slide => slideObserver.observe(slide));
+            
+            // Image Modal Logic
+            const modal = document.getElementById('image-modal');
+            const modalImg = document.getElementById('modal-image');
+            const modalTitle = document.getElementById('modal-title');
+            const modalDescription = document.getElementById('modal-description');
+            const closeModalBtn = document.getElementById('modal-close-btn');
+
+            document.querySelectorAll('.clickable-image').forEach(img => {
+                img.addEventListener('click', () => {
+                    const titleText = img.dataset.title || img.closest('.app-content, div').querySelector('h3, h4, p.font-semibold')?.textContent || 'Imagen';
+                    const descriptionText = img.dataset.description || img.closest('div').querySelector('p:not(.font-semibold)')?.textContent || '';
+                    
+                    modalImg.src = img.src;
+                    modalTitle.textContent = titleText;
+                    modalDescription.textContent = descriptionText;
+
+                    modal.classList.remove('hidden');
+                    setTimeout(() => {
+                        modal.classList.remove('opacity-0');
+                        modal.querySelector('.image-modal-content').classList.remove('opacity-0', 'scale-95');
+                    }, 10);
                 });
             });
 
-            const calculateBtn = document.getElementById('calculateBtn');
-            const fuerzaInput = document.getElementById('fuerza');
-            const diagonalInput = document.getElementById('diagonal');
-            const resultadoHV = document.getElementById('resultadoHV');
-            const resultadoLabel = document.getElementById('resultadoLabel');
+            const closeModal = () => {
+                modal.querySelector('.image-modal-content').classList.add('opacity-0', 'scale-95');
+                 modal.classList.add('opacity-0');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
 
-            const calculateHV = () => {
-                const F = parseFloat(fuerzaInput.value);
-                const d = parseFloat(diagonalInput.value);
-
-                if (isNaN(F) || isNaN(d) || F <= 0 || d <= 0) {
-                    resultadoHV.textContent = 'Error';
-                    resultadoLabel.textContent = 'Datos inválidos';
-                    return;
-                }
-
-                const hv = 1.854 * (F / (d * d));
-                resultadoHV.textContent = hv.toFixed(1);
-                resultadoLabel.textContent = `${F} HV`;
-            };
-
-            calculateBtn.addEventListener('click', calculateHV);
-            calculateHV();
-
-            const materialsData = {
-              'Todos': [
-                { label: 'Plomo', value: 5, category: 'Metales no Ferrosos' },
-                { label: 'Hierro', value: 55, category: 'Aceros y Aleaciones' },
-                { label: 'Acero al Carbono', value: 87, category: 'Aceros y Aleaciones' },
-                { label: 'Cobre', value: 80, category: 'Metales no Ferrosos' },
-                { label: 'Aluminio', value: 85, category: 'Metales no Ferrosos' },
-                { label: 'Acero Inoxidable', value: 180, category: 'Aceros y Aleaciones' },
-                { label: 'Titanio', value: 350, category: 'Aceros y Aleaciones' },
-                { label: 'Acero Tratado', value: 750, category: 'Aceros y Aleaciones' },
-                { label: 'Cerámica (Corindón)', value: 2000, category: 'Cerámicas' },
-              ],
-              'Aceros y Aleaciones': [
-                { label: 'Hierro', value: 55 },
-                { label: 'Acero al Carbono', value: 87 },
-                { label: 'Acero Inoxidable', value: 180 },
-                { label: 'Titanio', value: 350 },
-                { label: 'Acero Tratado', value: 750 },
-              ],
-              'Metales no Ferrosos': [
-                  { label: 'Plomo', value: 5 },
-                  { label: 'Cobre', value: 80 },
-                  { label: 'Aluminio', value: 85 },
-              ],
-              'Cerámicas': [
-                { label: 'Cerámica (Corindón)', value: 2000 },
-              ]
-            };
-
-            const ctx = document.getElementById('hardnessChart').getContext('2d');
-            let hardnessChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Dureza Vickers (HV)',
-                        data: [],
-                        backgroundColor: '#A58D7B',
-                        borderColor: '#846e5e',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            type: 'logarithmic',
-                            title: {
-                                display: true,
-                                text: 'Dureza HV (Escala Logarítmica)',
-                                font: { size: 14 }
-                            }
-                        },
-                        y: {
-                           ticks: {
-                                autoSkip: false,
-                                callback: function(value, index, values) {
-                                    const label = this.getLabelForValue(value);
-                                    if (label.length > 16) {
-                                        return label.substring(0, 16) + '...';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.x !== null) {
-                                        label += context.parsed.x.toFixed(1) + ' HV';
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    }
+            closeModalBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
                 }
             });
-
-            const updateChart = (filter = 'Todos') => {
-                const data = materialsData[filter].sort((a, b) => a.value - b.value);
-                hardnessChart.data.labels = data.map(m => m.label);
-                hardnessChart.data.datasets[0].data = data.map(m => m.value);
-                hardnessChart.update();
-            };
             
-            document.getElementById('materialFilter').addEventListener('change', (e) => {
-                updateChart(e.target.value);
+            // VFD Simulator
+            const slider = document.getElementById('frequency-slider');
+            const motorShaft = document.getElementById('motor-shaft');
+            const speedOutput = document.getElementById('speed-output');
+            const voltageOutput = document.getElementById('voltage-output');
+            const torqueOutput = document.getElementById('torque-output');
+            let currentRotation = 0;
+            let animationFrameId;
+
+            function animateMotor(speed) {
+                currentRotation += speed;
+                motorShaft.style.transform = `rotate(${currentRotation}deg)`;
+                if (speed > 0) {
+                    animationFrameId = requestAnimationFrame(() => animateMotor(speed));
+                }
+            }
+
+            function updateVfdDisplay(frequency) {
+                const maxFreq = 50;
+                const startupFreq = 5; 
+                
+                const speedPercentage = (frequency / maxFreq) * 100;
+                speedOutput.textContent = `${speedPercentage.toFixed(0)}%`;
+
+                const voltage = (frequency / maxFreq) * 220;
+                voltageOutput.textContent = `${voltage.toFixed(0)} V`;
+
+                const nominalPower = 1119; // 1.5 HP in Watts
+                const nominalRPM = 1425; // Typical RPM for 50Hz, 4-pole motor with slip
+                const nominalTorque = (nominalPower * 9.549) / nominalRPM;
+                
+                let currentTorque = 0;
+                if (frequency >= startupFreq) {
+                    currentTorque = nominalTorque * 0.95; // Approx constant torque
+                } else {
+                    currentTorque = nominalTorque * (frequency / startupFreq); // Linear ramp up
+                }
+                torqueOutput.textContent = `${currentTorque.toFixed(2)} Nm`;
+
+                cancelAnimationFrame(animationFrameId);
+                if (frequency >= startupFreq) {
+                    const animationSpeed = (frequency / maxFreq) * 25; // Increased speed
+                    animateMotor(animationSpeed);
+                }
+            }
+            
+            slider.addEventListener('input', (e) => {
+                updateVfdDisplay(parseFloat(e.target.value));
             });
 
-            updateChart();
+            updateVfdDisplay(parseFloat(slider.value));
+
         });
     </script>
 </body>
