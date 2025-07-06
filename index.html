@@ -357,7 +357,7 @@
                     <div class="h-line mt-6"></div>
                 </div>
                 <div class="max-w-4xl mx-auto card p-8">
-                    <img src="https://blogespanol.se.com/wp-content/uploads/2023/04/Blog-VFD_Diagrama-04-1024x600.png" alt="Arquitectura de un VFD" class="w-full h-auto object-contain rounded-lg mb-6 clickable-image" data-title="Arquitectura del VFD" data-description="Diagrama de bloques de un Variador de Frecuencia: Red AC -> Puente Rectificador -> Bus de DC (con capacitores) -> Inversor (con IGBTs) -> Salida AC al Motor.">
+                    <img src="https://instrumentacionycontrol.net/wp-content/uploads/2018/06/partes-de-un-variador-de-frecuencia.png" alt="Arquitectura de un VFD" class="w-full h-auto object-contain rounded-lg mb-6 clickable-image" data-title="Arquitectura del VFD" data-description="Diagrama de bloques de un Variador de Frecuencia: Red AC -> Puente Rectificador -> Bus de DC (con capacitores) -> Inversor (con IGBTs) -> Salida AC al Motor.">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
                             <h4 class="text-xl font-bold text-sky-400 mb-2">Modulación por Ancho de Pulso (PWM)</h4>
@@ -429,18 +429,18 @@
                     <div class="card p-8">
                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Arranque y Parada Suaves</h3>
                         <p class="text-gray-300 mb-4">El VFD programa rampas de aceleración y desaceleración, eliminando el golpe brusco de un arranque directo. Esto prolonga la vida útil de acoplamientos, ejes, rodamientos y la bomba.</p>
-                        <img src="https://i.ytimg.com/vi/jZ2Dj_2_Vv0/maxresdefault.jpg" alt="Corrientes de arranque directo" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Estrés en Arranque Directo" data-description="Gráfico de corriente de un arranque directo, mostrando el pico de corriente que causa estrés mecánico.">
+                        <img src="https://www.researchgate.net/publication/326161405/figure/fig1/AS:644383416455168@1530646194432/Figura-1-Arranque-directo-de-un-motor-de-induccion-a-b-c-Corrientes-de-fase-d.png" alt="Corrientes de arranque directo" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Estrés en Arranque Directo" data-description="Gráfico de corriente de un arranque directo, mostrando el pico de corriente que causa estrés mecánico.">
                     </div>
                     <div class="card p-8">
                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Eliminación del Golpe de Ariete</h3>
                         <p class="text-gray-300 mb-4">Este violento fenómeno hidráulico ocurre cuando una columna de agua se detiene abruptamente, pudiendo destruir tuberías y válvulas. Las rampas del VFD son la solución más efectiva al evitar cambios bruscos de velocidad.</p>
-                        <img src="https://3.bp.blogspot.com/-HQGxIgDjt7U/XJd4J29JmZI/AAAAAAAAAhg/ffLaeBLEVY8HiDz7kutHw3YxAi1ETssLACEwYBhgL/s1600/presi%25C3%25B3n%2Bdel%2Bagua%2Ben%2Bel%2Bpunto%2Bde%2Bcierre%2Ben%2Bel%2Bgolpe%2Bde%2Bariete%2Bhidr%25C3%25A1ulico.png" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Fenómeno del Golpe de Ariete" data-description="Ilustración del fenómeno de golpe de ariete, donde la detención brusca del fluido genera una onda de sobrepresión destructiva.">
+                        <img src="https://www.comeval.es/wp-content/uploads/2020/07/golpe-de-ariete-en-valvulas-y-tuberias.jpg" alt="Animación de golpe de ariete" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Fenómeno del Golpe de Ariete" data-description="Ilustración del fenómeno de golpe de ariete, donde la detención brusca del fluido genera una onda de sobrepresión destructiva.">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Design and Safety Section -->
+        <!-- Design and Safety Section (UPDATED) -->
         <section id="diseno" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                  <div class="text-center mb-12">
@@ -448,18 +448,17 @@
                     <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">La implementación práctica se basa en un conexionado correcto y en múltiples barreras de protección para una operación segura y fiable.</p>
                      <div class="h-line mt-6"></div>
                 </div>
-                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                 <div class="max-w-xl mx-auto">
                     <div class="card p-8">
-                    <div class="card p-8">
-                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Circuito General del Sistema</h3>
-                         <p class="text-gray-300 mb-4">Diagrama completo del sistema, integrando el circuito de fuerza, el de mando y el VFD, diseñado en CadeSimu para una visión global que incluye todas las protecciones necesarias (disyuntores, enclavamientos, etc.).</p>
+                         <h3 class="text-2xl font-bold text-sky-400 mb-4 text-center">Circuito General del Sistema</h3>
+                         <p class="text-gray-300 mb-4 text-center">Este diagrama, diseñado en CadeSimu, integra todos los componentes: el circuito de fuerza, el de mando, el VFD y las protecciones críticas como disyuntores y enclavamientos para la inversión de giro.</p>
                          <img src="https://i.imgur.com/8Z6sJ3t.png" alt="Diagrama general del circuito en CadeSimu" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Circuito General del Sistema (CadeSimu)" data-description="Esquema completo del proyecto, mostrando la interconexión de todos los componentes de potencia, control y protecciones.">
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- NEW: Precautions Section -->
+        <!-- Precautions Section -->
         <section id="precauciones" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
@@ -494,7 +493,7 @@
             </div>
         </section>
 
-        <!-- NEW: Maneuver Devices Section -->
+        <!-- Maneuver Devices Section -->
         <section id="dispositivos" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
