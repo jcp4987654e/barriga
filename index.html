@@ -69,7 +69,7 @@
             color: #F9FAFB;
         }
         .section-subtitle {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Roboto Mono', monospace;
         }
         #motor-shaft {
             transition: transform 0.1s linear;
@@ -104,10 +104,24 @@
         .btn-reset-motor:hover {
              background-color: #dc2626;
         }
+        /* Styles for interactive motor parts list */
+        .motor-part-btn {
+            transition: background-color 0.2s, border-color 0.2s, color 0.2s;
+        }
+        .motor-part-btn.active {
+            background-color: #0ea5e920; /* sky-500 with opacity */
+            border-color: #38bdf8;
+            color: #7dd3fc;
+            font-weight: 700;
+        }
+        .motor-part-info {
+            transition: opacity 0.3s ease-in-out;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden">
     
+    <!-- Floating Buttons -->
     <div class="fixed top-4 right-4 z-[60] flex space-x-2">
         <button id="play-presentation-btn" class="p-3 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition">
             <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -118,6 +132,7 @@
         </button>
     </div>
 
+    <!-- Presentation Navigation Arrows -->
     <div id="presentation-nav-prev" class="presentation-nav fixed left-4 top-1/2 -translate-y-1/2 z-[60] opacity-0 pointer-events-none">
         <button class="p-4 bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-full shadow-lg hover:bg-gray-700 transition disabled:opacity-50 disabled:cursor-not-allowed">
              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-white"><polyline points="15 18 9 12 15 6"></polyline></svg>
@@ -129,7 +144,7 @@
         </button>
     </div>
 
-
+    <!-- Cover Section -->
     <section id="caratula" class="relative text-white" style="min-height: 100vh; overflow: hidden;">
         <div class="absolute inset-0 bg-gray-900">
             <img src="https://images.unsplash.com/photo-1617994422012-ba24c3a4df76?q=80&w=2070&auto=format&fit=crop" alt="Fondo de sistema de bombeo moderno" class="w-full h-full object-cover opacity-20">
@@ -146,26 +161,30 @@
             <div id="integrantes-content-wrapper" class="content-container absolute inset-0 w-full flex-col items-center justify-center opacity-0 pointer-events-none flex">
                  <p class="text-4xl font-bold mb-8">Integrantes</p>
                  <div class="text-5xl md:text-7xl font-semibold space-y-4">
-                    <p class="integrante-nombre">Jesus Castellanos</p>
-                    <p class="integrante-nombre">Lucas Espinola</p>
-                    <p class="integrante-nombre">Tobias Copa</p>
-                    <p class="integrante-nombre">Joaquin Huaman</p>
-                    <p class="integrante-nombre">Brian Alcon</p>
-                </div>
+                     <p class="integrante-nombre">Jesus Castellanos</p>
+                     <p class="integrante-nombre">Lucas Espinola</p>
+                     <p class="integrante-nombre">Tobias Copa</p>
+                     <p class="integrante-nombre">Joaquin Huaman</p>
+                     <p class="integrante-nombre">Brian Alcon</p>
+                 </div>
             </div>
 
         </div>
     </section>
 
+    <!-- Main Header -->
     <header id="main-header" class="bg-gray-900/80 backdrop-blur-sm border-b border-gray-700 sticky top-0 z-50 opacity-0">
         <nav class="container mx-auto px-6 py-3 flex justify-between items-center">
             <h1 class="text-xl md:text-2xl font-bold text-sky-400" style="font-family: 'Teko', sans-serif;">Automatización de Bomba</h1>
             <div class="hidden md:flex flex-wrap items-center justify-center space-x-4 lg:space-x-6">
                 <a href="#intro" class="nav-link font-semibold pb-1">Introducción</a>
-                <a href="#motor" class="nav-link font-semibold pb-1">El Motor</a>
+                <a href="#motor-intro" class="nav-link font-semibold pb-1">El Motor</a>
+                <a href="#motor-parts" class="nav-link font-semibold pb-1">Anatomía</a>
                 <a href="#vfd" class="nav-link font-semibold pb-1">El VFD</a>
                 <a href="#beneficios" class="nav-link font-semibold pb-1">Beneficios</a>
-                <a href="#diseno" class="nav-link font-semibold pb-1">Diseño y Seguridad</a>
+                <a href="#diseno" class="nav-link font-semibold pb-1">Diseño</a>
+                <a href="#precauciones" class="nav-link font-semibold pb-1">Precauciones</a>
+                <a href="#dispositivos" class="nav-link font-semibold pb-1">Dispositivos</a>
                 <a href="#conclusion" class="nav-link font-semibold pb-1">Conclusión</a>
             </div>
             <button id="mobile-menu-button" class="md:hidden p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-400">
@@ -175,15 +194,19 @@
         </nav>
         <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
              <a href="#intro" class="block py-2 text-center nav-link">Introducción</a>
-            <a href="#motor" class="block py-2 text-center nav-link">El Motor Monofásico</a>
-            <a href="#vfd" class="block py-2 text-center nav-link">El Variador de Frecuencia</a>
+            <a href="#motor-intro" class="block py-2 text-center nav-link">El Motor</a>
+            <a href="#motor-parts" class="block py-2 text-center nav-link">Anatomía del Motor</a>
+            <a href="#vfd" class="block py-2 text-center nav-link">El VFD</a>
             <a href="#beneficios" class="block py-2 text-center nav-link">Beneficios</a>
             <a href="#diseno" class="block py-2 text-center nav-link">Diseño y Seguridad</a>
+            <a href="#precauciones" class="block py-2 text-center nav-link">Precauciones</a>
+            <a href="#dispositivos" class="block py-2 text-center nav-link">Dispositivos</a>
             <a href="#conclusion" class="block py-2 text-center nav-link">Conclusión</a>
         </div>
     </header>
 
     <main>
+        <!-- Introduction Section -->
         <section id="intro" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center">
@@ -214,36 +237,116 @@
                 </div>
             </div>
         </section>
-
-        <section id="motor" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
+        
+        <!-- Motor Intro Section -->
+        <section id="motor-intro" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
-                    <h2 class="section-title">El Dilema del Motor Monofásico</h2>
+                    <h2 class="section-title">El Motor Monofásico: Corazón del Sistema</h2>
                     <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">
-                        Para apreciar la solución, debemos entender el problema: un motor monofásico, por sí solo, no puede arrancar. Necesita un "truco" de ingeniería para crear el campo magnético giratorio que un motor trifásico genera de forma natural.
+                        Antes de optimizarlo, entendamos al protagonista. El motor monofásico es el más común en aplicaciones domésticas y de baja potencia por su simplicidad y costo.
                     </p>
                      <div class="h-line mt-6"></div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
                     <div class="card p-8">
-                        <h3 class="text-2xl font-bold text-sky-400 mb-4">El Campo Pulsante</h3>
-                        <p class="text-gray-300 mb-4">La red monofásica solo puede producir un campo magnético que pulsa en un eje, incapaz de generar un par de arranque. La solución es crear artificialmente un segundo campo desfasado.</p>
-                        <img src="https://www.researchgate.net/publication/332204858/figure/fig1/AS:744211105906688@1554444856982/Pulsating-magnetic-field-produced-by-a-single-phase-winding.jpg" alt="Campo magnético pulsante" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Campo Magnético Pulsante" data-description="Un campo magnético que solo alterna su polaridad en un único eje. No rota, simplemente pulsa, y es incapaz de generar un par de arranque.">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Principio de Funcionamiento</h3>
+                        <p class="text-gray-300 mb-4 text-base">El principio básico de funcionamiento de un motor monofásico de inducción se basa en el fenómeno de inducción electromagnética, descrito por la Ley de Faraday. Al aplicar corriente alterna monofásica al bobinado del estator, se genera un campo magnético alterno. No obstante, a diferencia de un motor trifásico, este campo no es giratorio por sí solo, lo que impide que el motor arranque espontáneamente.</p>
+                        <p class="text-gray-300 mb-4 text-base">Para resolver este problema, se emplea un bobinado auxiliar desplazado en el espacio respecto al principal, y se utiliza un capacitor para desfasar su corriente eléctrica. Así se crean dos campos magnéticos desfasados que combinados simulan un campo giratorio, lo que permite que el rotor (de tipo jaula de ardilla) comience a girar.</p>
+                        <p class="text-gray-300 text-base">Una vez que el motor arranca, en algunos modelos el bobinado auxiliar se desconecta mediante un interruptor centrífugo; en otros, permanece activo para mejorar el funcionamiento (motor con capacitor permanente).</p>
                     </div>
-                    <div class="card p-8">
-                        <h3 class="text-2xl font-bold text-sky-400 mb-4">La Solución Interna: Devanados y Capacitor</h3>
-                        <p class="text-gray-300 mb-4">El motor monofásico utiliza dos bobinados (principal y auxiliar) y un capacitor para desfasar la corriente en el bobinado auxiliar. Esto simula el campo giratorio necesario para arrancar.</p>
-                        <img src="https://www.construmatica.com/construpedia/images/thumb/4/4c/Motor_monofasico.png/400px-Motor_monofasico.png" alt="Diagrama de motor monofásico con capacitor" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Anatomía del Motor Monofásico" data-description="Diagrama del estator mostrando los dos devanados (principal y auxiliar) desplazados físicamente y el capacitor en serie con el auxiliar.">
+                    <div class="card p-8 bg-green-900/50 border-green-500">
+                        <h3 class="text-2xl font-bold text-green-400 mb-4">La Solución: Motores PSC</h3>
+                        <p class="text-gray-300 mb-4">La solución para el control con VFD es usar un motor de tipo **PSC (Permanent Split Capacitor)**. Este diseño no tiene interruptor centrífugo y el capacitor está conectado permanentemente. Es la única topología de motor monofásico compatible de forma nativa con el control de velocidad por VFD, una vez que se retira su capacitor original.</p>
                     </div>
                 </div>
-                 <div class="mt-12 text-center card p-8 max-w-4xl mx-auto bg-red-900/50 border-t-4 border-red-500">
-                    <h3 class="text-2xl font-bold text-red-400 mb-4">Criterio Crítico: Incompatibilidad por Diseño</h3>
-                    <p class="text-gray-300 mb-4">No todos los motores monofásicos son compatibles con un VFD. La mayoría utiliza un **interruptor centrífugo** para desconectar el bobinado de arranque. Si se reduce la velocidad con un VFD, este interruptor se reconecta, lo que puede destruir tanto el capacitor como el VFD.</p>
-                    <p class="font-bold text-red-400">La única topología compatible es el motor PSC (Capacitor Permanente), que no tiene interruptor centrífugo.</p>
+            </div>
+        </section>
+
+        <!-- Interactive Motor Parts Section -->
+        <section id="motor-parts" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title">Anatomía Interactiva del Motor</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">
+                        Selecciona un componente de la lista para conocer su función.
+                    </p>
+                    <div class="h-line mt-6"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+                    <!-- Column 1: List of Parts -->
+                    <div class="lg:col-span-1">
+                        <div id="motor-parts-list" class="flex flex-col space-y-2">
+                            <button data-part="carcasa" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Carcasa</button>
+                            <button data-part="estator" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Estátor</button>
+                            <button data-part="bobinado" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Bobinado</button>
+                            <button data-part="rotor" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Rotor</button>
+                            <button data-part="condensador" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Condensador</button>
+                            <button data-part="rodamientos" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Rodamientos</button>
+                            <button data-part="ventilador" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Ventilador</button>
+                            <button data-part="tapa-delantera" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Tapa Delantera</button>
+                            <button data-part="tapa-trasera" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Tapa Trasera</button>
+                            <button data-part="arandela" class="motor-part-btn w-full text-left p-4 rounded-lg border border-gray-600 bg-gray-700/50 hover:bg-gray-600/80">Arandela Axial</button>
+                        </div>
+                    </div>
+
+                    <!-- Column 2: Image and Description -->
+                    <div class="lg:col-span-2">
+                        <div class="relative mb-4">
+                            <img src="https://tercesa.com/wp-content/uploads/2023/02/Cuales-son-las-partes-de-un-motor-monofasico-e1675432323472.png" alt="Despiece de un motor monofásico" class="w-full h-auto rounded-lg">
+                        </div>
+                        <div id="motor-part-info-display" class="card p-8 min-h-[150px] flex flex-col justify-center">
+                            <div id="part-initial" class="motor-part-info text-center">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Explora el Motor</h3>
+                                <p class="text-gray-300">Selecciona una parte en la lista de la izquierda para ver su descripción detallada aquí.</p>
+                            </div>
+                            <div id="part-carcasa" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Carcasa</h3>
+                                <p class="text-gray-300">Envolvente principal del motor, protege los componentes internos y disipa calor.</p>
+                            </div>
+                            <div id="part-rotor" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Rotor</h3>
+                                <p class="text-gray-300">Parte giratoria del motor, que reacciona al campo magnético giratorio generado por el estator.</p>
+                            </div>
+                            <div id="part-estator" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Estátor</h3>
+                                <p class="text-gray-300">Parte fija con los bobinados que generan el campo magnético alterno.</p>
+                            </div>
+                             <div id="part-bobinado" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Bobinado</h3>
+                                <p class="text-gray-300">Cable conductor enrollado, responsable de crear el campo electromagnético en el estator.</p>
+                            </div>
+                            <div id="part-condensador" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Condensador (Capacitor)</h3>
+                                <p class="text-gray-300">Almacena energía eléctrica y crea el desfase necesario en el bobinado auxiliar.</p>
+                            </div>
+                            <div id="part-ventilador" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Ventilador</h3>
+                                <p class="text-gray-300">Asegura la circulación de aire para refrigerar el motor durante su funcionamiento.</p>
+                            </div>
+                            <div id="part-rodamientos" class="motor-part-info hidden opacity-0">
+                                 <h3 class="text-2xl font-bold text-sky-400 mb-4">Rodamientos</h3>
+                                 <p class="text-gray-300">Permiten el giro suave del eje y del rotor, minimizando la fricción y el desgaste.</p>
+                            </div>
+                            <div id="part-tapa-trasera" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Tapa Trasera</h3>
+                                <p class="text-gray-300">Pieza que sella la parte posterior del motor, sosteniendo el rodamiento y protegiendo el eje desde atrás.</p>
+                            </div>
+                            <div id="part-tapa-delantera" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Tapa Delantera</h3>
+                                <p class="text-gray-300">Cubre la parte frontal del motor, también sostiene el rodamiento del eje delantero.</p>
+                            </div>
+                            <div id="part-arandela" class="motor-part-info hidden opacity-0">
+                                <h3 class="text-2xl font-bold text-sky-400 mb-4">Arandela Axial</h3>
+                                <p class="text-gray-300">Componente de ajuste mecánico que limita el movimiento axial del rotor dentro del motor.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
         
+        <!-- VFD Section -->
         <section id="vfd" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
@@ -271,7 +374,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                         <div class="md:col-span-2">
                              <div class="flex items-center space-x-4 mb-4">
-                                <button id="motor-control-btn" class="btn-start-motor font-bold py-2 px-4 rounded-lg w-full">Arrancar Motor</button>
+                                 <button id="motor-control-btn" class="btn-start-motor font-bold py-2 px-4 rounded-lg w-full">Arrancar Motor</button>
                              </div>
                              <label for="frequency-slider" class="block font-semibold mb-2">Control de Frecuencia (Hz)</label>
                              <input type="range" id="frequency-slider" min="0" max="50" value="0" step="1" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer" disabled>
@@ -315,6 +418,7 @@
             </div>
         </section>
 
+        <!-- Benefits Section -->
         <section id="beneficios" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
@@ -336,6 +440,7 @@
             </div>
         </section>
 
+        <!-- Design and Safety Section -->
         <section id="diseno" class="py-16 md:py-24 presentation-slide">
             <div class="container mx-auto px-6">
                  <div class="text-center mb-12">
@@ -343,21 +448,82 @@
                     <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">La implementación práctica se basa en un conexionado correcto y en múltiples barreras de protección para una operación segura y fiable.</p>
                      <div class="h-line mt-6"></div>
                 </div>
-                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
                     <div class="card p-8">
                          <h3 class="text-2xl font-bold text-sky-400 mb-4">Inversión de Giro Segura</h3>
-                         <p class="text-gray-300 mb-4">La inversión de giro en un motor monofásico requiere un cambio físico en el cableado externo, gestionado de forma segura con contactores. Es un error crítico intentar hacerlo solo por programación.</p>
+                         <p class="text-gray-300 mb-4">La inversión de giro requiere un circuito externo con contactores para cambiar físicamente las conexiones del bobinado auxiliar. Se implementan enclavamientos para evitar la conmutación simultánea.</p>
                          <img src="https://i.ytimg.com/vi/e-J4eD_0gX8/maxresdefault.jpg" alt="Circuito de inversión de giro con contactores" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Circuito de Fuerza para Inversión de Giro" data-description="Diagrama de potencia con dos contactores (K1 y K2) para invertir de forma segura las conexiones del bobinado auxiliar del motor.">
                     </div>
-                     <div class="card p-8">
-                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Protecciones Críticas</h3>
-                         <p class="text-gray-300 mb-4">La seguridad se garantiza con un enclavamiento mecánico entre contactores, un enclavamiento eléctrico (contactos auxiliares NC) y un relé temporizador que impide la inversión hasta que el motor esté completamente detenido.</p>
-                         <img src="https://instrumentacionycontrol.net/wp-content/uploads/2017/10/enclavamiento-electrico-contactores.png" alt="Diagrama de enclavamiento eléctrico" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Lógica de Mando y Enclavamiento" data-description="Diagrama de control que muestra el enclavamiento eléctrico, donde el contacto NC de un contactor impide la activación del otro, previniendo cortocircuitos.">
+                    <div class="card p-8">
+                         <h3 class="text-2xl font-bold text-sky-400 mb-4">Circuito General del Sistema</h3>
+                         <p class="text-gray-300 mb-4">Diagrama completo del sistema, integrando el circuito de fuerza, el de mando y el VFD, diseñado en CadeSimu para una visión global que incluye todas las protecciones necesarias (disyuntores, enclavamientos, etc.).</p>
+                         <img src="https://i.imgur.com/8Z6sJ3t.png" alt="Diagrama general del circuito en CadeSimu" class="w-full h-auto object-contain rounded-lg clickable-image" data-title="Circuito General del Sistema (CadeSimu)" data-description="Esquema completo del proyecto, mostrando la interconexión de todos los componentes de potencia, control y protecciones.">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW: Precautions Section -->
+        <section id="precauciones" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                     <h2 class="section-title">Precauciones al Invertir el Giro</h2>
+                     <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">La inversión de giro es una operación delicada. Ignorar estas reglas puede causar daños graves al motor y al variador.</p>
+                     <div class="h-line mt-6"></div>
+                </div>
+                 <div class="max-w-4xl mx-auto card p-8">
+                     <ul class="space-y-6 text-left text-lg">
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-4 mt-1 text-2xl">⚠️</span>
+                             <div><strong>Detención Completa del Motor:</strong> Es imprescindible que el rotor esté completamente detenido antes de conmutar. Invertir el giro en marcha genera picos de corriente destructivos.</div>
+                         </li>
+                         <li class="flex items-start">
+                             <span class="text-sky-400 mr-4 mt-1 text-2xl">⏱️</span>
+                             <div><strong>Uso de Temporizadores:</strong> En sistemas automáticos, un temporizador debe forzar una pausa entre la desconexión de un sentido y la conexión del otro, garantizando la detención total.</div>
+                         </li>
+                         <li class="flex items-start">
+                              <span class="text-sky-400 mr-4 mt-1 text-2xl">🔄</span>
+                             <div><strong>Inversión del Bobinado Auxiliar:</strong> El cambio de giro se logra invirtiendo la polaridad del bobinado auxiliar (de arranque), nunca el principal.</div>
+                         </li>
+                         <li class="flex items-start">
+                              <span class="text-sky-400 mr-4 mt-1 text-2xl">🔒</span>
+                             <div><strong>Enclavamiento de Contactores:</strong> Es obligatorio usar enclavamientos (eléctricos y/o mecánicos) para impedir que los contactores de ambos sentidos se activen a la vez, previniendo cortocircuitos.</div>
+                         </li>
+                          <li class="flex items-start">
+                              <span class="text-sky-400 mr-4 mt-1 text-2xl">💡</span>
+                              <div><strong>Señalización Visual:</strong> Incorporar luces indicadoras para mostrar el sentido de giro activo ayuda a prevenir errores humanos durante la operación o mantenimiento.</div>
+                         </li>
+                     </ul>
+                 </div>
+            </div>
+        </section>
+
+        <!-- NEW: Maneuver Devices Section -->
+        <section id="dispositivos" class="py-16 md:py-24 presentation-slide">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-12">
+                    <h2 class="section-title">Dispositivos de Maniobra</h2>
+                    <p class="max-w-3xl mx-auto text-lg md:text-xl text-gray-400 section-subtitle">Diferentes tecnologías permiten controlar la inversión de giro, cada una con sus ventajas.</p>
+                    <div class="h-line mt-6"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Interruptor Manual</h3>
+                        <p class="text-gray-300">Un selector de tres posiciones (avance, parada, retroceso) que cambia las conexiones manualmente. Es una solución simple y económica para maniobras locales y ocasionales.</p>
+                    </div>
+                    <div class="card p-8">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Contactores</h3>
+                        <p class="text-gray-300">El método estándar para automatización. Se usan dos contactores enclavados para controlar cada sentido de giro, permitiendo el control a distancia y la integración con otras lógicas.</p>
+                    </div>
+                    <div class="card p-8 md:col-span-2 lg:col-span-1">
+                        <h3 class="text-2xl font-bold text-sky-400 mb-4">Variador de Frecuencia (VFD)</h3>
+                        <p class="text-gray-300">La solución más avanzada. Permite la inversión de giro por programación, además de ofrecer arranque suave, control de velocidad y protecciones integradas, como se ha visto en este proyecto.</p>
                     </div>
                 </div>
             </div>
         </section>
         
+        <!-- Conclusion Section -->
         <section id="conclusion" class="py-16 md:py-24 bg-gray-800/50 presentation-slide">
             <div class="container mx-auto px-6">
                 <div class="text-center mb-12">
@@ -391,6 +557,7 @@
 
     </main>
 
+    <!-- Footer -->
     <footer class="bg-gray-900 text-white mt-16 border-t border-gray-700">
         <div class="container mx-auto px-6 py-8 text-center">
             <p class="font-semibold text-lg text-sky-400">Guía Interactiva de Automatización de Bomba</p>
@@ -417,6 +584,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // Fullscreen toggle
             const fullscreenBtn = document.getElementById('fullscreen-btn');
             fullscreenBtn.addEventListener('click', () => {
                 if (!document.fullscreenElement) {
@@ -430,41 +598,37 @@
                 }
             });
 
+            // Header visibility on scroll
             const mainHeader = document.getElementById('main-header');
             const coverSection = document.getElementById('caratula');
-
-            const observer = new IntersectionObserver((entries) => {
+            const headerObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    if (!entry.isIntersecting) {
-                        mainHeader.style.opacity = '1';
-                    } else {
-                        mainHeader.style.opacity = '0';
-                    }
+                    mainHeader.style.opacity = entry.isIntersecting ? '0' : '1';
                 });
             }, { threshold: 0.1 });
+            headerObserver.observe(coverSection);
 
-            observer.observe(coverSection);
-
+            // Mobile menu toggle
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
             mobileMenuButton.addEventListener('click', () => {
                 mobileMenu.classList.toggle('hidden');
             });
-            
             document.querySelectorAll('#mobile-menu a').forEach(link => {
                 link.addEventListener('click', () => {
                     mobileMenu.classList.add('hidden');
                 });
             });
 
+            // Active nav link on scroll
             const sections = Array.from(document.querySelectorAll('main section'));
-            const allSlides = [document.getElementById('caratula'), ...sections];
+            const allSlidesForNav = [document.getElementById('caratula'), ...sections];
             const navLinks = document.querySelectorAll('.nav-link');
             
             window.onscroll = () => {
                 if(presentationModeActive) return;
                 let current = '';
-                allSlides.forEach(section => {
+                allSlidesForNav.forEach(section => {
                     const sectionTop = section.offsetTop;
                     if (pageYOffset >= sectionTop - 100) {
                         current = section.getAttribute('id');
@@ -479,28 +643,7 @@
                 });
             };
 
-            const setupTabs = (tabSelector, contentSelector, activeClass) => {
-                const tabs = document.querySelectorAll(tabSelector);
-                const contents = document.querySelectorAll(contentSelector);
-                tabs.forEach(tab => {
-                    tab.addEventListener('click', () => {
-                        tabs.forEach(t => t.classList.remove(activeClass));
-                        tab.classList.add(activeClass);
-                        const target = tab.getAttribute('data-target');
-                        contents.forEach(content => {
-                            content.classList.add('hidden');
-                            if (content.id === target) {
-                                content.classList.remove('hidden');
-                            }
-                        });
-                    });
-                });
-            };
-
-            setupTabs('.procedimiento-tab', '.procedimiento-content', 'active');
-            setupTabs('.app-tab', '.app-content', 'active');
-
-            // Caratula Interaction
+            // Cover interaction
             const startBtn = document.getElementById('start-presentation-btn');
             const initialContent = document.getElementById('initial-content-wrapper');
             const integrantesContent = document.getElementById('integrantes-content-wrapper');
@@ -531,6 +674,7 @@
             
             let presentationModeActive = false;
             let currentSlide = 0;
+            const allSlides = [document.getElementById('caratula'), ...sections];
 
             function updateNavButtons() {
                 prevBtn.disabled = currentSlide === 0;
@@ -539,38 +683,32 @@
 
             function showSlide(index) {
                  allSlides.forEach((slide, i) => {
-                    if (i === index) {
-                        slide.classList.add('active-slide');
-                    } else {
-                        slide.classList.remove('active-slide');
-                    }
-                });
-                allSlides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
-                updateNavButtons();
+                    slide.classList.toggle('active-slide', i === index);
+                 });
+                 allSlides[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                 updateNavButtons();
             }
 
             playBtn.addEventListener('click', () => {
                 presentationModeActive = !presentationModeActive;
                 document.body.classList.toggle('presentation-mode', presentationModeActive);
 
+                playIcon.classList.toggle('hidden', presentationModeActive);
+                stopIcon.classList.toggle('hidden', !presentationModeActive);
+                
+                const navOpacity = presentationModeActive ? '1' : '0';
+                const navEvents = presentationModeActive ? 'auto' : 'none';
+
+                prevNav.style.opacity = navOpacity;
+                nextNav.style.opacity = navOpacity;
+                prevNav.style.pointerEvents = navEvents;
+                nextNav.style.pointerEvents = navEvents;
+
                 if (presentationModeActive) {
-                    playIcon.classList.add('hidden');
-                    stopIcon.classList.remove('hidden');
-                    prevNav.style.opacity = '1';
-                    nextNav.style.opacity = '1';
-                    prevNav.style.pointerEvents = 'auto';
-                    nextNav.style.pointerEvents = 'auto';
                     showSlide(currentSlide);
                 } else {
-                    playIcon.classList.remove('hidden');
-                    stopIcon.classList.add('hidden');
-                    prevNav.style.opacity = '0';
-                    nextNav.style.opacity = '0';
-                    prevNav.style.pointerEvents = 'none';
-                    nextNav.style.pointerEvents = 'none';
-                    allSlides.forEach(slide => {
-                        slide.classList.remove('active-slide');
-                    });
+                    allSlides.forEach(slide => slide.classList.remove('active-slide'));
+                    window.scrollTo({ top: allSlides[currentSlide].offsetTop, behavior: 'smooth' });
                 }
             });
 
@@ -588,15 +726,15 @@
                 }
             });
 
-             const slideObserver = new IntersectionObserver((entries) => {
+            const slideObserver = new IntersectionObserver((entries) => {
                 if(!presentationModeActive) return;
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                       const intersectingSlideIndex = allSlides.findIndex(slide => slide.id === entry.target.id);
-                       if (intersectingSlideIndex !== -1) {
-                           currentSlide = intersectingSlideIndex;
-                           updateNavButtons();
-                       }
+                        const intersectingSlideIndex = allSlides.findIndex(slide => slide.id === entry.target.id);
+                        if (intersectingSlideIndex !== -1) {
+                            currentSlide = intersectingSlideIndex;
+                            updateNavButtons();
+                        }
                     }
                 });
             }, { threshold: 0.6 });
@@ -612,8 +750,8 @@
 
             document.querySelectorAll('.clickable-image').forEach(img => {
                 img.addEventListener('click', () => {
-                    const titleText = img.dataset.title || img.closest('.app-content, div').querySelector('h3, h4, p.font-semibold')?.textContent || 'Imagen';
-                    const descriptionText = img.dataset.description || img.closest('div').querySelector('p:not(.font-semibold)')?.textContent || '';
+                    const titleText = img.dataset.title || 'Imagen Ampliada';
+                    const descriptionText = img.dataset.description || '';
                     
                     modalImg.src = img.src;
                     modalTitle.textContent = titleText;
@@ -637,9 +775,7 @@
 
             closeModalBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    closeModal();
-                }
+                if (e.target === modal) closeModal();
             });
             
             // VFD Simulator
@@ -653,7 +789,7 @@
             
             let currentRotation = 0;
             let animationFrameId;
-            let motorState = 'stopped'; // 'stopped', 'ramping-up', 'running'
+            let motorState = 'stopped';
             let rampInterval;
 
             function animateMotor(speed) {
@@ -684,7 +820,7 @@
                 torqueOutput.textContent = `${currentTorque.toFixed(2)} Nm`;
 
                 cancelAnimationFrame(animationFrameId);
-                const animationSpeed = (rpm / nominalRPM) * 30; // Realistic speed
+                const animationSpeed = (rpm / nominalRPM) * 30;
                 if (animationSpeed > 0) {
                     animateMotor(animationSpeed);
                 }
@@ -696,34 +832,29 @@
                     motorControlBtn.disabled = true;
                     motorControlBtn.textContent = 'Arrancando...';
                     
-                    let currentVoltage = 0;
-                    const targetVoltage = 110; // Start with half voltage
-                    const rampDuration = 2000; // 2 seconds
+                    let currentFreq = 0;
+                    const targetFreq = 50;
+                    const rampDuration = 3000; // 3 seconds for full ramp
                     const steps = 50;
                     const stepTime = rampDuration / steps;
-                    const voltageStep = targetVoltage / steps;
+                    const freqStep = targetFreq / steps;
 
                     rampInterval = setInterval(() => {
-                        currentVoltage += voltageStep;
-                        if (currentVoltage >= targetVoltage) {
-                            currentVoltage = targetVoltage;
+                        currentFreq += freqStep;
+                        if (currentFreq >= targetFreq) {
+                            currentFreq = targetFreq;
                             clearInterval(rampInterval);
-                            
-                            // After initial ramp, jump to full voltage
-                            setTimeout(() => {
-                                motorState = 'running';
-                                motorControlBtn.textContent = 'Detener Motor';
-                                motorControlBtn.classList.remove('btn-start-motor');
-                                motorControlBtn.classList.add('btn-reset-motor');
-                                motorControlBtn.disabled = false;
-                                slider.disabled = false;
-                                slider.value = 50;
-                                updateDisplay(50, 220);
-                            }, 500);
+                            motorState = 'running';
+                            motorControlBtn.textContent = 'Detener Motor';
+                            motorControlBtn.classList.replace('btn-start-motor', 'btn-reset-motor');
+                            motorControlBtn.disabled = false;
+                            slider.disabled = false;
                         }
-                        // During ramp, frequency is fixed at 50Hz for voltage build-up
-                        updateDisplay(50, currentVoltage); 
+                        slider.value = currentFreq;
+                        const currentVoltage = (currentFreq / targetFreq) * 220;
+                        updateDisplay(currentFreq, currentVoltage);
                     }, stepTime);
+
                 } else {
                     motorState = 'stopped';
                     cancelAnimationFrame(animationFrameId);
@@ -732,8 +863,7 @@
                     slider.value = 0;
                     updateDisplay(0,0);
                     motorControlBtn.textContent = 'Arrancar Motor';
-                    motorControlBtn.classList.add('btn-start-motor');
-                    motorControlBtn.classList.remove('btn-reset-motor');
+                    motorControlBtn.classList.replace('btn-reset-motor', 'btn-start-motor');
                     motorControlBtn.disabled = false;
                 }
             });
@@ -743,6 +873,31 @@
                 const frequency = parseFloat(e.target.value);
                 const voltage = (frequency / 50) * 220;
                 updateDisplay(frequency, voltage);
+            });
+
+            // Interactive Motor Parts Logic (List-based)
+            const motorPartButtons = document.querySelectorAll('.motor-part-btn');
+            const motorPartInfoDivs = document.querySelectorAll('#motor-part-info-display .motor-part-info');
+
+            motorPartButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const partId = 'part-' + button.dataset.part;
+
+                    // Update button styles
+                    motorPartButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    // Update description visibility
+                    motorPartInfoDivs.forEach(div => {
+                        div.classList.add('hidden', 'opacity-0');
+                    });
+
+                    const targetInfo = document.getElementById(partId);
+                    if (targetInfo) {
+                        targetInfo.classList.remove('hidden');
+                        setTimeout(() => targetInfo.classList.remove('opacity-0'), 10);
+                    }
+                });
             });
 
         });
