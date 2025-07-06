@@ -71,32 +71,38 @@
         .section-subtitle {
             font-family: 'Inter', sans-serif;
         }
-        .vfd-block {
-            transition: background-color 0.3s, border-color 0.3s;
-        }
-        .vfd-block:hover {
-            background-color: #38bdf820;
-            border-color: #38BDF8;
-        }
         #motor-shaft {
             transition: transform 0.1s linear;
             transform-origin: center;
         }
-        main > section.presentation-slide {
-            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-            position: absolute;
-            width: 100%;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(20px);
+        .presentation-slide {
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
-        main > section.active-slide {
+        body.presentation-mode main > section {
+            display: none;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+         body.presentation-mode main > section.active-slide {
+            display: block;
             opacity: 1;
             transform: translateY(0);
-            pointer-events: auto;
-            position: relative;
+        }
+        .btn-start-motor {
+            background-color: #22c55e;
+            color: white;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow: 0 0 15px #22c55e50;
+        }
+        .btn-start-motor:hover {
+            background-color: #16a34a;
+        }
+        .btn-reset-motor {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-reset-motor:hover {
+             background-color: #dc2626;
         }
     </style>
 </head>
@@ -264,8 +270,11 @@
                     <h3 class="text-2xl font-bold text-center text-sky-400 mb-6">Simulador Interactivo de VFD</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
                         <div class="md:col-span-2">
-                             <label for="frequency-slider" class="block font-semibold mb-2">Frecuencia (Hz)</label>
-                             <input type="range" id="frequency-slider" min="0" max="50" value="50" step="1" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                             <div class="flex items-center space-x-4 mb-4">
+                                <button id="motor-control-btn" class="btn-start-motor font-bold py-2 px-4 rounded-lg w-full">Arrancar Motor</button>
+                             </div>
+                             <label for="frequency-slider" class="block font-semibold mb-2">Control de Frecuencia (Hz)</label>
+                             <input type="range" id="frequency-slider" min="0" max="50" value="0" step="1" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer" disabled>
                              <div class="flex justify-between text-xs px-1">
                                  <span>0 Hz</span>
                                  <span>25 Hz</span>
@@ -274,7 +283,7 @@
                         </div>
                         <div id="motor-animation" class="flex justify-center items-center h-32">
                            <svg id="motor-svg" class="w-32 h-32" viewBox="0 0 100 100">
-                                <circle cx="50" cy="50" r="45" fill="#374151" stroke="#4B5563" stroke-width="2"/>
+                                <circle cx="50" cy="50" r="48" fill="#374151" stroke="#4B5563" stroke-width="2"/>
                                 <circle cx="50" cy="50" r="38" fill="#1F2937" stroke="#4B5563" stroke-width="1"/>
                                 <g id="motor-shaft">
                                     <circle cx="50" cy="50" r="10" fill="#9CA3AF"/>
@@ -284,18 +293,22 @@
                            </svg>
                         </div>
                     </div>
-                     <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                     <div class="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                          <div class="bg-gray-700 p-4 rounded-lg">
                              <p class="text-sm font-bold text-sky-400">Velocidad</p>
-                             <p id="speed-output" class="text-2xl font-bold">100%</p>
+                             <p id="speed-output" class="text-2xl font-bold">0%</p>
+                         </div>
+                         <div class="bg-gray-700 p-4 rounded-lg">
+                             <p class="text-sm font-bold text-sky-400">RPM</p>
+                             <p id="rpm-output" class="text-2xl font-bold">0</p>
                          </div>
                          <div class="bg-gray-700 p-4 rounded-lg">
                              <p class="text-sm font-bold text-sky-400">Tensión</p>
-                             <p id="voltage-output" class="text-2xl font-bold">220 V</p>
+                             <p id="voltage-output" class="text-2xl font-bold">0 V</p>
                          </div>
                          <div class="bg-gray-700 p-4 rounded-lg">
                              <p class="text-sm font-bold text-sky-400">Torque</p>
-                             <p id="torque-output" class="text-2xl font-bold">7.50 Nm</p>
+                             <p id="torque-output" class="text-2xl font-bold">0.00 Nm</p>
                          </div>
                      </div>
                 </div>
@@ -407,7 +420,9 @@
             const fullscreenBtn = document.getElementById('fullscreen-btn');
             fullscreenBtn.addEventListener('click', () => {
                 if (!document.fullscreenElement) {
-                    document.documentElement.requestFullscreen();
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.error(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+                    });
                 } else {
                     if (document.exitFullscreen) {
                         document.exitFullscreen();
@@ -526,10 +541,8 @@
                  allSlides.forEach((slide, i) => {
                     if (i === index) {
                         slide.classList.add('active-slide');
-                        slide.style.display = 'block';
                     } else {
                         slide.classList.remove('active-slide');
-                        slide.style.display = 'none';
                     }
                 });
                 allSlides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -538,6 +551,8 @@
 
             playBtn.addEventListener('click', () => {
                 presentationModeActive = !presentationModeActive;
+                document.body.classList.toggle('presentation-mode', presentationModeActive);
+
                 if (presentationModeActive) {
                     playIcon.classList.add('hidden');
                     stopIcon.classList.remove('hidden');
@@ -545,7 +560,6 @@
                     nextNav.style.opacity = '1';
                     prevNav.style.pointerEvents = 'auto';
                     nextNav.style.pointerEvents = 'auto';
-                    document.body.style.overflow = 'hidden';
                     showSlide(currentSlide);
                 } else {
                     playIcon.classList.remove('hidden');
@@ -556,9 +570,7 @@
                     nextNav.style.pointerEvents = 'none';
                     allSlides.forEach(slide => {
                         slide.classList.remove('active-slide');
-                        slide.style.display = 'block';
                     });
-                     document.body.style.overflow = 'auto';
                 }
             });
 
@@ -636,51 +648,102 @@
             const speedOutput = document.getElementById('speed-output');
             const voltageOutput = document.getElementById('voltage-output');
             const torqueOutput = document.getElementById('torque-output');
+            const rpmOutput = document.getElementById('rpm-output');
+            const motorControlBtn = document.getElementById('motor-control-btn');
+            
             let currentRotation = 0;
             let animationFrameId;
+            let motorState = 'stopped'; // 'stopped', 'ramping-up', 'running'
+            let rampInterval;
 
             function animateMotor(speed) {
+                if (motorState !== 'running' && motorState !== 'ramping-up') {
+                    cancelAnimationFrame(animationFrameId);
+                    return;
+                }
                 currentRotation += speed;
                 motorShaft.style.transform = `rotate(${currentRotation}deg)`;
-                if (speed > 0) {
-                    animationFrameId = requestAnimationFrame(() => animateMotor(speed));
-                }
+                animationFrameId = requestAnimationFrame(() => animateMotor(speed));
             }
 
-            function updateVfdDisplay(frequency) {
+            function updateDisplay(frequency, voltage) {
                 const maxFreq = 50;
-                const startupFreq = 5; 
-                
                 const speedPercentage = (frequency / maxFreq) * 100;
                 speedOutput.textContent = `${speedPercentage.toFixed(0)}%`;
-
-                const voltage = (frequency / maxFreq) * 220;
                 voltageOutput.textContent = `${voltage.toFixed(0)} V`;
+                
+                const nominalRPM = 1500;
+                const rpm = (frequency / maxFreq) * nominalRPM;
+                rpmOutput.textContent = `${rpm.toFixed(0)}`;
 
                 const nominalPower = 1119; // 1.5 HP in Watts
-                const nominalRPM = 1425; // Typical RPM for 50Hz, 4-pole motor with slip
-                const nominalTorque = (nominalPower * 9.549) / nominalRPM;
+                const nominalAngularSpeed = 50 * 2 * Math.PI;
+                const nominalTorque = (nominalPower / nominalAngularSpeed);
                 
-                let currentTorque = 0;
-                if (frequency >= startupFreq) {
-                    currentTorque = nominalTorque * 0.95; // Approx constant torque
-                } else {
-                    currentTorque = nominalTorque * (frequency / startupFreq); // Linear ramp up
-                }
+                let currentTorque = nominalTorque * (voltage / 220);
                 torqueOutput.textContent = `${currentTorque.toFixed(2)} Nm`;
 
                 cancelAnimationFrame(animationFrameId);
-                if (frequency >= startupFreq) {
-                    const animationSpeed = (frequency / maxFreq) * 25; // Increased speed
+                const animationSpeed = (rpm / nominalRPM) * 30; // Realistic speed
+                if (animationSpeed > 0) {
                     animateMotor(animationSpeed);
                 }
             }
             
-            slider.addEventListener('input', (e) => {
-                updateVfdDisplay(parseFloat(e.target.value));
+            motorControlBtn.addEventListener('click', () => {
+                if (motorState === 'stopped') {
+                    motorState = 'ramping-up';
+                    motorControlBtn.disabled = true;
+                    motorControlBtn.textContent = 'Arrancando...';
+                    
+                    let currentVoltage = 0;
+                    const targetVoltage = 110; // Start with half voltage
+                    const rampDuration = 2000; // 2 seconds
+                    const steps = 50;
+                    const stepTime = rampDuration / steps;
+                    const voltageStep = targetVoltage / steps;
+
+                    rampInterval = setInterval(() => {
+                        currentVoltage += voltageStep;
+                        if (currentVoltage >= targetVoltage) {
+                            currentVoltage = targetVoltage;
+                            clearInterval(rampInterval);
+                            
+                            // After initial ramp, jump to full voltage
+                            setTimeout(() => {
+                                motorState = 'running';
+                                motorControlBtn.textContent = 'Detener Motor';
+                                motorControlBtn.classList.remove('btn-start-motor');
+                                motorControlBtn.classList.add('btn-reset-motor');
+                                motorControlBtn.disabled = false;
+                                slider.disabled = false;
+                                slider.value = 50;
+                                updateDisplay(50, 220);
+                            }, 500);
+                        }
+                        // During ramp, frequency is fixed at 50Hz for voltage build-up
+                        updateDisplay(50, currentVoltage); 
+                    }, stepTime);
+                } else {
+                    motorState = 'stopped';
+                    cancelAnimationFrame(animationFrameId);
+                    clearInterval(rampInterval);
+                    slider.disabled = true;
+                    slider.value = 0;
+                    updateDisplay(0,0);
+                    motorControlBtn.textContent = 'Arrancar Motor';
+                    motorControlBtn.classList.add('btn-start-motor');
+                    motorControlBtn.classList.remove('btn-reset-motor');
+                    motorControlBtn.disabled = false;
+                }
             });
 
-            updateVfdDisplay(parseFloat(slider.value));
+            slider.addEventListener('input', (e) => {
+                if (motorState !== 'running') return;
+                const frequency = parseFloat(e.target.value);
+                const voltage = (frequency / 50) * 220;
+                updateDisplay(frequency, voltage);
+            });
 
         });
     </script>
